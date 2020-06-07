@@ -1,0 +1,7 @@
+Abrir Console de Linhas de comando: Tools-> NuGet Package Manager -> Package Manager Console
+
+Adicionar Nova Migração:
+Add-Migration NomeQueEuQuiserDar
+
+Após verificar se a Migração foi gerada corretamente, realizar o comando abaixo para aplicar no banco de Dados:
+Update-Database -verbose

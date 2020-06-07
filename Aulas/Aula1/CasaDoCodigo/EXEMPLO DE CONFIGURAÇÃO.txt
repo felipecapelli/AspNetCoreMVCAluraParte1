@@ -1,0 +1,68 @@
+No appsetings.json---------------------------------------------------------
+
+{
+    "ConnectionStrings": {
+        "Blog": "Server=(localdb)\\mssqllocaldb;Database=MeuBlog;Trusted_Connection=True;"
+    },  
+    "Security": {
+        "Language" : "pt-BR",
+        "SuperUser": {
+            "Login": "bgiorgione",
+            "Email": "bgiorgione@bgiorgione.com.br",
+            "ShowEmail": "true"
+        },
+        "Admin": {
+            "Login": "moliveira",
+            "Email": "mclricardo@gmail.com.br",
+            "ShowEmail": "false"
+        }
+    }
+}
+
+No Controller---------------------------------------------------------
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+
+namespace Blog.Controllers
+{
+    public class BlogController : Controller
+    {
+        private IConfiguration _configuration;
+
+        public BlogController(IConfiguration Configuration)
+        {
+            _configuration = Configuration;
+        }
+
+        public IActionResult Usuarios()
+        {
+            // Configuração usando a string de chave
+            ViewData["SecurityLanguage"] = _configuration["Security:Language"];
+
+            // Configuração usando método GetSection
+
+            ViewData["SecuritySuperUserLogin"] = 
+            _configuration.GetSection("Security").GetSection("SuperUser").GetSection("Login");
+
+            // Configuração usando GetSection e string de chave ao mesmo tempo
+            ViewData["SecuritySuperUserEmail"] = 
+                _configuration.GetSection("Security")["SuperUser:Email"];
+
+            // Configuração usando GetSection e string de chave ao mesmo tempo
+            ViewData["SecuritySuperUserShowEmail"] = 
+                _configuration.GetSection("Security")["SuperUser:ShowEmail"];
+
+            return View();
+        }
+    }
+}
+
+Na View---------------------------------------------------------
+
+<p>
+    SecurityLanguage <strong>@ViewData["SecurityLanguage"]</strong><br />
+    SecuritySuperUserLogin <strong>@ViewData["SecuritySuperUserLogin"]</strong><br />
+    SecuritySuperUserEmail <strong>@ViewData["SecuritySuperUserEmail"]</strong>
+    SecuritySuperUserShowEmail <strong>@ViewData["SecuritySuperUserShowEmail"]</strong>
+</p>
