@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CasaDoCodigo.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,15 @@ namespace CasaDoCodigo
             {
                 options.UseSqlServer(connectionString);
             });
+
+            services.AddTransient<IDataService, DataService>();
+            services.AddTransient<IProdutoRepository, ProdutoRepository>();
+
             //---------------------------------------------
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env,
+            IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
@@ -53,7 +59,7 @@ namespace CasaDoCodigo
             });
 
             //---------------- Criar o banco se não tiver criado
-            serviceProvider.GetService<ApplicationContext>().Database.Migrate(); //no final pode usar .EnSureCreated() no lugar de Migrate(), mas daí não vai poder mais fazer migrações
+            serviceProvider.GetService<IDataService>().InicializaDB();
         }
     }
 }
