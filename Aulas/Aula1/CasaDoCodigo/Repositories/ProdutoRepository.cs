@@ -15,16 +15,16 @@ namespace CasaDoCodigo.Repositories
 
         public IList<Produto> GetProdutos()
         {
-            return dbSets.ToList();
+            return dbSet.ToList();
         }
 
         public void SaveProdutos(List<Livro> livros)
         {
             foreach (var livro in livros)
             {
-                if (!dbSets.Where(p => p.Codigo == livro.Codigo).Any())
+                if (!dbSet.Where(p => p.Codigo == livro.Codigo).Any())
                 {
-                    dbSets.Add(new Produto(livro.Codigo, livro.Nome, livro.Preco));
+                    dbSet.Add(new Produto(livro.Codigo, livro.Nome, livro.Preco));
                 }
             }
             contexto.SaveChanges();
