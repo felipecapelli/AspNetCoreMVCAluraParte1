@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CasaDoCodigo.Models;
 using CasaDoCodigo.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,17 +24,23 @@ namespace CasaDoCodigo
         {
             services.AddMvc();
             
-            //---------------------------------------------
+            //---------------------------------------------Banco de Dados
             string connectionString = Configuration.GetConnectionString("Default"); /*Esse Default foi configurado no arquivo appsettings*/
             services.AddDbContext<ApplicationContext>(options =>
             {
                 options.UseSqlServer(connectionString);
             });
 
+            //---------------------------------------------Injeção de dependência
             services.AddTransient<IDataService, DataService>();
             services.AddTransient<IProdutoRepository, ProdutoRepository>();
+            services.AddTransient<ICadastroRepository, CadastroRepository>();
+            services.AddTransient<IItemPedidoRepository, ItemPedidoRepository>();
+            services.AddTransient<IPedidoRepository, PedidoRepository>();
 
-            //---------------------------------------------
+            //---------------------------------------------Session
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env,
@@ -51,14 +58,17 @@ namespace CasaDoCodigo
 
             app.UseStaticFiles();
 
+            //---------------------------------------------Usando a Session
+            app.UseSession();
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Pedido}/{action=Carrossel}/{id?}");
+                    template: "{controller=Pedido}/{action=Carrossel}/{codigo?}"); //Aqui se pode mudar a rota padrão
             });
 
-            //---------------- Criar o banco se não tiver criado
+            //--------------------------------------------- Criar o banco se não tiver criado
             serviceProvider.GetService<IDataService>().InicializaDB();
         }
     }
